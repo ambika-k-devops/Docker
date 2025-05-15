@@ -133,6 +133,8 @@ docker ps
 
 ## Docker Architecture
 
+![Docker Architecture](../images/docker-architecture.png)
+
 ### 1. Docker Engine
 **Docker Engine** is the core component responsible for building, running, and managing containers. It consists of:  
 - **Docker Daemon (dockerd):** Runs in the background, manages containers, images, and networking.  
