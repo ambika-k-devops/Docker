@@ -1,0 +1,439 @@
+
+
+                                      DOCKER REVISION CLASS
+                                      =====================
+
+part 1
+======
+
+
+--> What is docker?
+
+--> Before Docker and After Docker ?
+
+--> containerization vs virtualization?
+
+--> Docker arch?
+
+--> Docker flow
+
+--> Docker installation
+
+--> Docker image related commands
+
+--> Docker container related commands
+
+
+
+========================================================
+
+
+
+practical session to undestand docker
+=====================================
+
+step 1: check in your server docker is installed or not
+
+step 2:
+     
+   git clone https://github.com/kkeducation12345/maven-web-app-project-kk-funda.git
+
+   cd maven-web-app-project-kk-funda
+
+step 3: 
+
+   sudo apt install maven -y   --> It will install maven and jre
+ 
+    java --version
+    mvn -version
+
+step 4: Build the artifactory
+
+     mvn clean package
+
+    <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>3.3.2</version> <!-- Use a stable version -->
+        </plugin>
+    </plugins>
+</build>
+
+
+step 5: to build the docker image; please make sure to create a docker file.
+
+      vi Dockerfile
+  
+FROM tomcat:8.0.21-jre8
+COPY target/maven-web-application.war /usr/local/tomcat/webapps/maven-web-application.war
+   
+      docker build -t kkeducation12345/java-web-app .
+
+step 6: To list the images
+   
+      docker images or docker image ls
+
+step 7: Push the image to docker hub
+
+    NOTE: Before pushing image we need to authenticate 
+
+    docker login -u kkeducation12345 -p password
+
+    docker push kkeducation12345/java-web-app
+
+step 8: How to run a container from an image
+
+    docker run -d -p 8080:8080 --name javawebapp kkeducation12345/java-web-app
+
+step 9: Access the application
+
+docker ps -a  --> To list the containers
+
+
+
+===============================================================================================
+
+Go inside the container
+-----------------------
+
+docker exec -it javawebapp /bin/bash
+
+
+=============================================================================
+
+
+commands
+========
+
+docker info 
+docker --version or docker version
+
+image related
+=============
+
+How to build docker image
+-------------------------
+
+docker build -t <image> <buildContext>
+
+docker build -t kkeducation123456/java-web-app:1 .
+docker build -t nexus.jio.com/java-web-app:1 .
+
+docker build -f customName kkeducation123456/java-web-app:1 .
+
+
+How to list the images
+----------------------
+
+docker images or docker image ls
+
+How to login docker hub
+-----------------------
+
+docker login -u username -p password
+
+docker info
+
+cat password |docker login -u kkeducation12345 --password-stdin
+
+How to logout 
+-------------
+
+docker logout
+docker info
+
+
+How to push an docker image
+---------------------------
+docker push kkeducation123456/java-web-app:1 .
+
+
+How to pull the image
+---------------------
+
+docker pull kkeducation123456/java-web-app:1
+
+to see more details about image
+-------------------------------
+
+docker image inspect <imageid/imageName>
+
+To see the layers of an image
+-----------------------------
+
+docker history <imageId/ImageName>
+
+How to delete image
+-------------------
+
+docker rmi <image_id/Image_name>
+
+
+How to delete multiple images?
+------------------------------
+
+docker rmi <image1> <image2>
+
+How to delete all the images
+----------------------------
+
+docker rmi -f $(docker images -qa)
+
+what is dangling images?
+------------------------
+
+How to display only dangling images?
+------------------------------------
+
+docker images -f dangling=true
+
+how to delete all the dangling images?
+---------------------------------------
+
+docker rmi -f $(docker images -q -f dangling=true)
+
+
+
+docker system prune
+docker image prune
+docker container prune
+docker network prune
+docker volume prune
+
+
+
+docker tag
+-----------
+
+docker tag kkeducation123456/java-web-app:1 customname 
+
+
+
+docker system df
+----------------
+
+
+How to move image from one server to another server?
+----------------------------------------------------
+
+Approach 1: Use the nexus/Jfrog/DTR/ECR
+
+Approach 2:
+
+   docker save -o <filename>.tar <imageId>
+   scp filename.tar ubuntu@172.34.42.78:/home/ubuntu
+
+  docker load -i filename.tar
+
+
+=========================================================================================
+
+
+Container commands
+==================
+
+How to create a container?
+--------------------------
+
+docker create : It will create a container, But it will not start the container(process)
+
+docker run : It will create a container and it will start the container(process)
+
+docker create -p 8080:8080 --name javawebapp kkeducation12345/java-web-app
+
+docker start javawebapp
+
+docker run -d -p 8080:8080 --name javawebapp1 kkeducation12345/java-web-app
+
+
+How to list the running containers?
+-----------------------------------
+
+docker ps or docker container ls --> running containers
+
+docker ps -a or docker container ls -a --> All the containers
+
+
+How to start and stop containers?
+----------------------------------
+
+docker start <cid>
+
+docker stop <cid>
+
+How to delete containers?
+--------------------------
+
+docker rm <cid> --> for stopped state containers
+
+docker rm -f <cid>  ---> for running containers
+
+How to remove all conatners?
+-----------------------------
+
+docker rm -f <cid> <cid> ......
+
+docker rm -f $(docker ps -q) --> It will remove all running conainers
+
+docker rm -f $(docker ps -aq) --> It will remove all conainers
+
+
+How to remove all stopeed conatainers?
+--------------------------------------
+
+docker container prune
+
+docker rm -f $(docker ps --filter status="exited" -aq)
+
+
+How to rename the container?
+----------------------------
+
+docker rename <cid/name> <new name>
+
+how to restart the container?
+-----------------------------
+
+docker restart <cid/cname>
+
+
+
+IQ: what is the difference between docker create and run?
+
+IQ: What is port publish or port mapping in docker?
+
+
+IQ: What is the difference between docker stop and docker kill?
+
+
+docker stop: not force kill
+docker kill: force kill
+
+docker stop will send SIGTERM first and then SIGKILL, It will kill the process with grace period. Whereas docker kill will send SIGKILL call, It will kill the process without grace period.
+
+
+How to pause the container process?
+------------------------------------
+
+docker pause <cid/cname>
+docker unpause <cid/cname>
+
+How to delete only paused containers?
+-------------------------------------
+docker rm -f $(docker ps --filter status="paused")
+
+===============================================================================================
+
+
+docker run --name ubuntucontainer ubuntu
+
+docker ps -a
+
+docker start ubuntucontainer
+
+
+=====================================================================
+
+How to create a container in interative mode?
+---------------------------------------------
+
+docker run -it --name test ubuntu /bin/bash
+
+
+
+How to trobule shoot or debug application which is running as a container?
+---------------------------------------------------------------------------
+
+docker logs <cid/cname>
+
+docker logs --tail <number_of_lines> <cid/cname>
+
+docker logs -f <cid/cname>
+
+
+How to go inside the container?
+-------------------------------
+
+docker exec -it <cid/name> /bin/bash
+
+
+execute commands on running container
+-------------------------------------
+
+docker exec 5a7b9937d4df ls 
+
+How to display whick process is running inside the container?
+-------------------------------------------------------------
+
+docker top <cid/cname>
+
+
+
+
+How to display resource(RAM,CPU) details?
+-----------------------------------------
+
+docker stats <cid/cname>
+
+IQ: Is it possible to allocate cutom memory?
+
+Ans: Yes
+
+docker run --memory="512m" -d -p 8082:8080 --name javawebapp2 kkeducation12345/java-web-app:1
+
+docker run --memory="64m" -d -p 8082:8080 --name javawebapp2 kkeducation12345/java-web-app:1  --> Here container will be killed.
+
+docker inspect <cid> --> OOMKilled
+
+
+
+How to copy files from system to continer and container to system?
+--------------------------------------------------------------------
+
+
+docker cp five:/usr/local/tomcat/logs/catalina.2025-05-17.log catalina.2025-05-17.log
+
+
+docker cp demo.txt javawebapp:/usr/local/tomcat/
+
+
+
+IQ: what is the diff between COPY and docker cp?
+
+COPY is a docker file instruction using this we can copy to the image while building files/folders 
+
+docker cp Is a command copy files/dirs to container or to a system
+
+
+
+what is the use of docker diff?
+-------------------------------
+
+docker diff <cid/cname>
+
+
+
+what is docker commit?
+-----------------------
+
+docker commit <cid/cname> kkeducation12345/java-web-app:24
+
+
+=================================================================================================================
+
+How to inspect a container?
+---------------------------
+
+docker inspect <cid/cname>
+
+docker inspect --format "{{.NetworkSettings.IPAddress}}" mavenapp
+
+docker inspect --format "{{.State.Pid}}" 0d2dab452ceb
+
+docker inspect --format "{{.NetworkSettings.IPAddress}},{{.State.Status}}" 0d2dab452ceb
+
+docker inspect --format "IP Address: {{.NetworkSettings.Networks.bridge.IPAddress}}, Name: {{.Name}}" mavenapp
+
+
