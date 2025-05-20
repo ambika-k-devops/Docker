@@ -1,0 +1,268 @@
+
+8. ENTRYPOINT
+-------------
+
+--> CMD instruction used to execute a commands/ scripts etc.
+--> RUN instruction will be exuecuted while creating an image.
+-->  ENTRYPOINT instruction used to execute a commands/ scripts etc.
+
+EX: ENTRYPOINT java -jar app.jar  --> shell form
+
+    ENTRYPOINT ["java", "-jar", "app.jar"]--> executable form
+
+
+IQ] what is the difference between CMD and ENTRYPOINT?
+ANS:
+
+  --> CMD instructions are overriden while creating a container, But ENTRYPOINT instructions can't be overrriden while creating a container.
+  --> Both the instructions are used to start our container.
+
+IQ] can we keep both CMD and ENTRYPOINT instructions in a Dockerfile?
+
+Ans: Yes, But CMD instructions will not be executed if both are present, CMD instructions will be passed as an argument to the ENTRYPOINT.
+
+  EX: CMD ["ls"]
+      ENTRYPOINT ["echo", "Hello"]
+
+    --> It will be executed as below:
+       
+        /bin/echo Hello ls
+
+       output: Hello ls
+
+scenario: Our requirement always we have to execute sh catalina.sh, But argument by default it has to execute "start"
+
+       Ex: CMD start
+           ENTRYPOINT ["sh","catalina.sh"]
+
+      /bin/sh catlina.sh start
+
+
+CMD pwd
+ENTRYPOINT ["echo","Hello"]
+
+   /bin/echo Hello pwd
+
+
+
+IQ] what is the difference between COPY and docker cp?
+
+IQ] what is the difference between RUN and docker run?
+
+
+===============================================================================================
+
+
+
+
+
+
+
+
+Sample Docker File 1
+---------------------
+
+FROM debian:12.0
+MAINTAINER KKFUNDA <kkeducationblr@gmail.com>
+LABEL author="kkfunda"
+LABEL email="kkeducationblr@gmail.com"
+RUN echo "welcome to kkkfunda"
+RUN apt update -y
+RUN apt install git wget tree -y
+RUN mkdir -p /opt/app
+RUN echo "welcome to kk devops"
+
+docker build -t firstimage .
+
+
+IQ] My dockerfile contains more layers ? How to reduse it ?
+
+Ans: you can use && operator to merge all RUN instruction.
+
+
+IQ] what is docker build cahce?
+
+
+IQ] what if we delete all the images and again build the docker file? what happens?
+
+
+Ans:  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+IQ] what is docker build cache?
+
+docker build -t firstimage .
+docker build -t firstimage .
+docker build -t firstimage .
+
+--> add some instructions and build to see the cache 
+
+IQ] How to skip the build cache?
+
+ docker build --no-cache -t firstimage1 .
+
+
+
+sample Docker file 2
+---------------------
+
+FROM debian:12.0
+MAINTAINER KKFUNDA <kkeducationblr@gmail.com>
+LABEL author="kkfunda"
+LABEL email="kkeducationblr@gmail.com"
+RUN echo "welcome to kkkfunda"
+RUN apt update -y
+RUN apt install git wget -y
+RUN mkdir -p /opt/application
+RUN echo "welcome to kk devops"
+
+CMD ["date"]
+
+ docker build -t firstimage1 .
+ docker run --name firstc1 firstimage1
+
+ docker start firstc1
+ 
+ docker logs firstc1
+
+sample Docker file 3
+--------------------
+
+FROM debian:12.0
+MAINTAINER KKFUNDA <kkeducationblr@gmail.com>
+LABEL author="kkfunda"
+LABEL email="kkeducationblr@gmail.com"
+RUN echo "welcome to kkkfunda"
+RUN apt update -y
+RUN apt install git wget -y
+RUN mkdir -p /opt/application
+RUN echo "welcome to kk devops"
+
+CMD ["date"]
+
+CMD ["echo","java"]
+
+
+sample Docker file 4
+---------------------
+
+FROM debian:12.0
+MAINTAINER KKFUNDA <kkeducationblr@gmail.com>
+LABEL author="kkfunda"
+LABEL email="kkeducationblr@gmail.com"
+RUN echo "welcome to kkkfunda"
+RUN apt update -y
+RUN apt install git wget -y
+RUN mkdir -p /opt/application
+RUN echo "welcome to kk devops"
+
+CMD sh test.sh
+
+docker build -t imagetwo .  --> No error while building an image
+docker run imagetwo  ---> sh: 0: cannot open test.sh: No such file
+
+
+sample Docker file 5
+--------------------
+
+FROM debian:12.0
+MAINTAINER KKFUNDA <kkeducationblr@gmail.com>
+LABEL author="kkfunda"
+LABEL email="kkeducationblr@gmail.com"
+RUN echo "welcome to kkkfunda"
+COPY test.sh test.sh
+RUN apt update -y
+RUN apt install git wget -y
+RUN mkdir -p /opt/application
+RUN echo "welcome to kk devops"
+
+CMD sh test.sh
+
+
+
+===============================================================================
+
+
+sample Docker file 6
+---------------------
+
+FROM debian:12.0
+MAINTAINER KKFUNDA <kkeducationblr@gmail.com>
+LABEL author="kkfunda"
+LABEL email="kkeducationblr@gmail.com"
+RUN echo "welcome to kkkfunda"
+COPY test.sh test.sh
+RUN apt update -y
+RUN apt install git wget -y
+RUN mkdir -p /opt/application
+RUN echo "welcome to kk devops"
+
+ENTRYPOINT ["ls","-lrth"]
+
+
+docker build -t imageone .
+docker run imageone
+docker run imageone date
+
+
+sample dockerfile 7
+-------------------
+
+IQ] can we have a multiple ENTRYPOINT 's?
+
+
+FROM debian:12.0
+MAINTAINER KKFUNDA <kkeducationblr@gmail.com>
+LABEL author="kkfunda"
+LABEL email="kkeducationblr@gmail.com"
+RUN echo "welcome to kkkfunda"
+COPY test.sh test.sh
+RUN apt update -y
+RUN apt install git wget -y
+RUN mkdir -p /opt/application
+RUN echo "welcome to kk devops"
+
+ENTRYPOINT ["ls","-lrth"]
+ENTRYPOINT ["date"]
+
+
+sample dockerfile 8
+--------------------
+
+IQ] can we have both CMD and ENTRYPOINT?
+
+FROM debian:12.0
+MAINTAINER KKFUNDA <kkeducationblr@gmail.com>
+LABEL author="kkfunda"
+LABEL email="kkeducationblr@gmail.com"
+RUN echo "welcome to kkkfunda"
+COPY test.sh test.sh
+RUN apt update -y
+RUN apt install git wget -y
+RUN mkdir -p /opt/application
+RUN echo "welcome to kk devops"
+
+CMD ["pwd"]
+ENTRYPOINT ["echo","Welcome"]
+
+
+---> show the ngnix and jenkins Dockerfiles
