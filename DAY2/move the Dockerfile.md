@@ -1,6 +1,6 @@
 # by mistake given touch Dokerfile
 instead of Dockerfile, in Ubauntu machine, how to change this or rename this
-![alt text](image.png)
+
 No worries, If you've accidentally created a file named `Dokerfile` instead of `Dockerfile` on your Ubuntu machine, you can simply rename it using the `mv` (move) command in the terminal.
 
 ### ✅ Command to rename the file:
