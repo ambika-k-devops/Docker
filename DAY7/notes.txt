@@ -1,0 +1,172 @@
+
+9. ARG instruction
+-------------------
+
+-->Using the ARG we can define arguments for Dockerfile. we can use these in another instruction.
+
+--> you can define multiple arguments in a Dockerfile
+
+--> ARG the only instruction that may precede FROM in a Docker file.
+
+--> ARG values are not available after building an image, i.e Running container won't access the ARG values.
+
+
+
+
+
+
+EX: ARG branchName=development
+    ARG environment=prod
+
+    LABEL branch $branchName
+
+--> while creating an image we can pass ARG as below
+
+    ARG baseImageTag
+    FROM debian:$baseImageTag
+
+    docker build -t <imageName> --build-arg  baseImageTag=12.0 .
+
+
+
+Example :
+
+ARG baseImageTag
+FROM debian:$baseImageTag
+MAINTAINER KKFUNDA <kkeducationblr@gmail.com>
+LABEL author="kkfunda"
+LABEL email="kkeducationblr@gmail.com"
+RUN echo "welcome to kkkfunda"
+COPY test.sh test.sh
+RUN apt update -y
+RUN apt install git wget -y
+RUN mkdir -p /opt/application
+RUN echo "welcome to kk devops"
+
+docker build -t <imageName> --build-arg  baseImageTag=12.0 .
+
+docker build -t <imageName> --build-arg  baseImageTag=11.0 .
+
+
+Ex:
+
+ARG baseImageTag=latest
+FROM debian:$baseImageTag
+
+
+==============================================================================
+
+
+10. ENV
+----------
+
+--> ENV is used to set an environment variables, The are available for image and container.
+
+EX:
+ 
+     ENV CATALINE_HOME /usr/local/tomcat
+     ENV JAVA_HOME /usr/bin/jdk8
+
+
+EX:
+
+FROM debian:12.0
+MAINTAINER KKFUNDA <kkeducationblr@gmail.com>
+LABEL author="kkfunda"
+LABEL email="kkeducationblr@gmail.com"
+RUN echo "welcome to kkkfunda"
+COPY test.sh test.sh
+RUN apt update -y
+RUN apt install git wget -y
+RUN mkdir -p /opt/app
+
+ENV HOME /opt/app
+RUN echo $HOME
+
+RUN echo "welcome to kk devops"
+
+
+
+
+
+
+
+
+
+
+docker build -t imageone .
+
+docker inspect imageone
+
+
+===============================================================================
+
+
+11. WORKDIR
+------------
+
+--> we can set working directory for an image/conatiner.
+--> All sebsequent instructions will be processed under working directory.
+--> It is working like cd command
+
+
+EX: WORKDIR /usr/local/tomcat
+
+
+ 
+EX:
+
+FROM debian:12.0
+MAINTAINER KKFUNDA <kkeducationblr@gmail.com>
+LABEL author="kkfunda"
+LABEL email="kkeducationblr@gmail.com"
+RUN echo "welcome to kkkfunda"
+COPY test.sh test.sh
+WORKDIR /opt/app
+RUN apt update -y
+RUN apt install git wget -y
+RUN mkdir -p /opt/app
+RUN echo "welcome to kk devops"
+COPY abc.txt abc.txt
+
+
+12. USER
+-------
+
+--> USER is used to set user for the container or image
+
+EX: 
+
+RUN echo "hello"
+
+RUN useradd kkdevops
+
+USER kkdevops
+
+RUN echo "devops"
+
+--> By default root user if you are not mention.
+
+--> It is working as "su" command
+
+
+
+
+COPY abc.py /opt/abc.py ---> RUN cp abc.py /opt/abc.py
+
+
+
+
+
+
+
+
+
+================================================
+
+13. EXPOSE
+----------
+
+--> expose indicates which port is opened/used in the image.
+
+  EX: EXPOSE 8080
