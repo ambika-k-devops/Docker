@@ -278,3 +278,88 @@ docker inspect --format "IP Address: {{.NetworkSettings.Networks.bridge.IPAddres
 - What is the difference between `docker stop` and `docker kill`?
 - Can memory be limited for containers?
 - What is the difference between COPY and docker cp?
+  Sure Ambika! Here's a **simple, clear, and interview-friendly explanation** for each of your questions:
+
+---
+
+### ❓1. What is the difference between `docker create` and `docker run`?
+
+✅ **Answer:**
+
+* `docker create`: Only **creates** a container but does **not start** it.
+* `docker run`: **Creates and starts** the container immediately.
+
+📌 Example:
+
+```bash
+docker create ubuntu         # creates container
+docker run ubuntu            # creates + starts container
+```
+
+---
+
+### ❓2. What is port publishing or port mapping in Docker?
+
+✅ **Answer:**
+Port mapping is used to **expose container ports** to the host machine so you can **access the container app from outside**.
+
+📌 Example:
+
+```bash
+docker run -p 8080:80 nginx
+```
+
+This maps:
+
+* `80` (inside container) → `8080` (on host)
+  So you can open `http://localhost:8080` to access the container.
+
+---
+
+### ❓3. What is the difference between `docker stop` and `docker kill`?
+
+✅ **Answer:**
+
+* `docker stop`: Sends a **graceful shutdown (SIGTERM)**, then **SIGKILL** after timeout.
+* `docker kill`: Immediately sends **SIGKILL**, no waiting.
+
+📌 Think of it like:
+
+* `stop` = “Request to stop”
+* `kill` = “Force stop now”
+
+---
+
+### ❓4. Can memory be limited for containers?
+
+✅ **Answer:**
+Yes, you can **set memory limits** using `--memory` flag.
+
+📌 Example:
+
+```bash
+docker run --memory="512m" myapp
+```
+
+This ensures the container uses **max 512MB RAM**.
+If it exceeds, Docker may **kill** it with `OOMKilled` status.
+
+---
+
+### ❓5. What is the difference between `COPY` and `docker cp`?
+
+✅ **Answer:**
+
+| Feature   | COPY (Dockerfile)           | docker cp (CLI)                     |
+| --------- | --------------------------- | ----------------------------------- |
+| Usage     | Used **during image build** | Used **after container is running** |
+| Direction | From **host → image**       | From **host ↔ container**           |
+| When used | In `Dockerfile`             | In command line (`docker cp`)       |
+
+📌 Summary:
+
+* `COPY` = build-time copy into image
+* `docker cp` = runtime copy to/from container
+
+---
+
