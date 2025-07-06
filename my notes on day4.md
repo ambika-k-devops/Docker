@@ -362,4 +362,77 @@ If it exceeds, Docker may **kill** it with `OOMKilled` status.
 * `docker cp` = runtime copy to/from container
 
 ---
+# Dangling Image
+Great question, Ambika! Let’s break this down clearly:
+
+---
+
+### 🔥 **Why `docker rmi -f <IMAGE ID>` didn't work**
+
+```bash
+docker rmi -f 7c163b877990
+```
+
+➡️ **Error:**
+
+```
+conflict: unable to delete 7c163b877990 (cannot be forced) - image is being used by running container 6be86b81285e
+```
+
+#### 🧠 **Explanation:**
+
+Even though you used `-f` (force), **Docker does not remove images that are actively in use by running containers** — regardless of whether you use the **image ID** or the **image name**.
+
+In your case:
+
+* `7c163b877990` is the image **ID**.
+* It's being used by **container `6be86b81285e`** which is still **running**.
+
+So Docker **protects you** from breaking a running container by not deleting its base image.
+
+---
+
+### ✅ **Why `docker rmi -f ambikadevops/mavenwebapp:1.0.2` worked**
+
+```bash
+docker rmi -f ambikadevops/mavenwebapp:1.0.2
+```
+
+➡️ This removed **only the tags (name references)**, not the actual image binary (ID).
+
+So even though the **tag** is removed:
+
+* The **image ID** (e.g., `7c163b877990`) is still present in the system.
+* It’s just now labeled as `<none>:<none>`, which means **dangling image**.
+
+This is why it looks like only the name worked — but in fact:
+
+> **Docker allowed untagging the image name, but still didn’t remove the image binary because a running container is using it.**
+
+---
+
+### 🧪 To fully delete the image:
+
+You **must first stop and remove the container** using it:
+
+```bash
+docker stop 6be86b81285e
+docker rm 6be86b81285e
+docker rmi -f 7c163b877990
+```
+
+---
+
+### 🧠 Summary
+
+| Action                             | What happens                                                                     |
+| ---------------------------------- | -------------------------------------------------------------------------------- |
+| `docker rmi -f <image-name>`       | Removes the tag reference (untagging). If image is still in use, binary stays.   |
+| `docker rmi -f <image-id>`         | Fails if container is running, even with `-f`. Must stop/remove container first. |
+| Running container                  | Prevents actual image deletion                                                   |
+| `<none>:<none>` in `docker images` | Means image is dangling (no tag) but still used somewhere (or orphaned)          |
+
+---
+
+Let me know if you want a diagram or a cheat sheet for image removal and cleanup commands!
 
